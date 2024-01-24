@@ -17,28 +17,55 @@ def username():
     
 def query1():
 	return """
-    Select *
-	FROM trip
-	WHERE id <= 7450
+    SELECT trip.id, trip.start_station_id, station.name, start_d, end_d, duration
+		FROM trip
+	  INNER JOIN station ON station.id=trip.start_station_id
+		WHERE trip.id <= 7450;
 	"""
 
 def query2():
 	return """
-	
+	SELECT origin_station.name as origin_station, trip.start_d, trip.duration, destination_station.name as destination_station
+	FROM trip
+	JOIN station origin_station
+	ON trip.start_station_id = origin_station.id
+	JOIN station destination_station
+	ON trip.end_station_id = destination_station.id
+	WHERE trip.id <= 7450;
 	"""
 
 def query3():
 	return """
+	SELECT origin_station.name, destination_station.name, COUNT(*) as cnt, FORMAT('%.2f', AVG(duration)) as avg_duration
+	FROM trip
+	JOIN station origin_station
+	ON trip.start_station_id = origin_station.id
+	JOIN station destination_station
+	ON trip.end_station_id = destination_station.id
+	GROUP BY trip.end_station_id, trip.start_station_id
+	HAVING cnt >= 10
+	ORDER BY cnt;
 	"""
 
 	
 def query4():
 	return """
+	SELECT DISTINCT date(trip.start_d) as date, AVG(weather.max_temperature_f) as avg_temp, COUNT(DISTINCT trip.id) as number_trips
+	FROM trip
+	JOIN daily_weather weather
+	ON DATE(trip.start_d) = DATE(weather.date)
+	GROUP BY date(start_d)
+	ORDER BY number_trips ASC;
 	"""
 
 
 def query5():
 	return """
+	SELECT strftime('%H', time) as hour, format('%.2f', AVG(bikes_available)) as avg_bikes_available, format('%.2f', AVG(docks_available)) as avg_docks_available
+	FROM station_status
+	GROUP BY strftime('%H', time)
+	ORDER BY avg_bikes_available ASC
+	LIMIT 10;
 	"""
 
 
