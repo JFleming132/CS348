@@ -69,8 +69,14 @@ def query5():
 	"""
 
 
-def query6():
+def query6(): #need to get rid of repeat pairs somehow, try UNIQUE or DISTINCT
 	return """
+	SELECT s1.name, s2.name, (SQRT(POW(s1.lat-s2.lat, 2) + POW(s1.long-s2.long, 2))) as euclidian_distance
+	FROM station s1
+	JOIN station s2
+	ON s1.id <> s2.id
+	ORDER BY euclidian_distance ASC
+	limit 10;
 	"""
 
 
