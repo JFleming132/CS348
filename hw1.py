@@ -123,17 +123,52 @@ def query9():
 
 def query10():
 	return """
-
+	SELECT trip.end_station_id, s.name, 1 as num, 'number of arriving trips' as num_description
+	FROM trip
+	JOIN station s
+		ON trip.end_station_id = s.id
+	GROUP BY end_station_id
+	HAVING COUNT(*) = 1
+	UNION
+	SELECT s.id, s.name, sstatus.bikes_available as num, 'bikes available' as num_description
+	FROM station s
+	JOIN station_status sstatus
+		ON s.id = sstatus.station_id
+	WHERE num >= 23;
 	"""
 
 
 def query11():
 	return """
+	SELECT station.id as StationID, station.name,
+	  COALESCE(
+			(SELECT COUNT(*)
+			FROM (
+			  SELECT trip.id 
+			  FROM trip 
+			  WHERE trip.start_station_id = station.id OR trip.end_station_id = station.id)), 0) as number_of_trips
+	FROM station
+	ORDER BY number_of_trips ASC
+	LIMIT 20;
 	"""
 
 
 def query12():
 	return """
+	SELECT bike_id
+	FROM trip
+	WHERE 
+		(SELECT COUNT(*)
+		FROM trip
+		JOIN station
+		ON trip.start_station_id = station.id
+		HAVING station.name = 'Mountain View Caltrain Station' OR station.name = 'Evelyn Park and Ride') > 1
+		AND 
+		(SELECT COUNT(*)
+		FROM trip
+		JOIN station
+		ON trip.end_station_id = station.id
+		HAVING station.name = 'Mountain View Caltrain Station' OR station.name = 'Evelyn Park and Ride') > 1;
 	"""
 
 
