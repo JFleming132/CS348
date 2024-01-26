@@ -69,12 +69,12 @@ def query5():
 	"""
 
 
-def query6(): #need to get rid of repeat pairs somehow, try UNIQUE or DISTINCT
+def query6():
 	return """
-	SELECT s1.name, s2.name, (SQRT(POW(s1.lat-s2.lat, 2) + POW(s1.long-s2.long, 2))) as euclidian_distance
+	SELECT DISTINCT s1.name, s2.name, ROUND((SQRT(POW(s1.lat-s2.lat, 2) + POW(s1.long-s2.long, 2))), 6) as euclidian_distance
 	FROM station s1
 	JOIN station s2
-	ON s1.id <> s2.id
+	ON s1.id <> s2.id AND s1.id < s2.id
 	ORDER BY euclidian_distance ASC
 	limit 10;
 	"""
@@ -82,21 +82,48 @@ def query6(): #need to get rid of repeat pairs somehow, try UNIQUE or DISTINCT
 
 def query7():
 	return """
+	SELECT trip.id, s1.name, s2.name, ROUND((SQRT(POW(s1.lat-s2.lat, 2) + POW(s1.long-s2.long, 2))), 6) as euclidian_distance, trip.duration
+	FROM trip
+	JOIN station s1
+		ON trip.start_station_id = s1.id
+	JOIN station s2
+		ON trip.end_station_id = s2.id
+	ORDER BY euclidian_distance DESC
+	LIMIT 5;
 	"""
 
 
 def query8():
 	return """
+	SELECT w1.zip_code, DATE(w1.date), DATE(w2.date), w1.mean_temperature_f, w1.precipitation_inches
+	FROM daily_weather AS w1
+	JOIN daily_weather AS w2
+		ON w2.zip_code = w1.zip_code AND DATE(w1.date) < DATE(w2.date)
+	WHERE w1.precipitation_inches > .01 AND w1.mean_temperature_f = w2.mean_temperature_f AND w1.precipitation_inches = w2.precipitation_inches AND w1.precipitation_inches <> 'T';
 	"""
 
 
 def query9():
 	return """
+	SELECT DATE(t1.start_d), t1.bike_id, SUBSTRING(s1.name, 1, 20) as start_station, SUBSTRING(s2.name, 1, 20) as middle_station, SUBSTRING(s3.name, 1, 20) as end_station, 
+		ROUND((SQRT(POW(s1.lat-s3.lat, 2) + POW(s1.long-s3.long, 2))) , 6) as euclidian_distance
+	FROM trip AS t1
+	JOIN trip AS t2
+		ON DATE(t1.start_d) = DATE(t2.start_d) AND t1.end_station_id = t2.start_station_id AND t1.bike_id = t2.bike_id
+	JOIN station AS s1
+		ON t1.start_station_id = s1.id
+	JOIN station AS s2
+		ON t1.end_station_id = s2.id
+	JOIN station AS s3
+		ON t2.end_station_id = s3.id
+	ORDER BY euclidian_distance DESC
+	LIMIT 5;
 	"""
 
 
 def query10():
 	return """
+
 	"""
 
 
