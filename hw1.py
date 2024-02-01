@@ -36,7 +36,7 @@ def query2():
 
 def query3():
 	return """
-	SELECT origin_station.name, destination_station.name, COUNT(*) as cnt, FORMAT('%.2f', AVG(duration)) as avg_duration
+	SELECT origin_station.name, destination_station.name, COUNT(*) as cnt, ROUND(AVG(duration), 2) as avg_duration
 	FROM trip
 	JOIN station origin_station
 	ON trip.start_station_id = origin_station.id
@@ -61,7 +61,7 @@ def query4():
 
 def query5():
 	return """
-	SELECT strftime('%H', time) as hour, format('%.2f', AVG(bikes_available)) as avg_bikes_available, format('%.2f', AVG(docks_available)) as avg_docks_available
+	SELECT strftime('%H', time) as hour, ROUND(AVG(bikes_available), 2) as avg_bikes_available, ROUND(AVG(docks_available), 2) as avg_docks_available
 	FROM station_status
 	GROUP BY strftime('%H', time)
 	ORDER BY avg_bikes_available ASC
@@ -157,23 +157,30 @@ def query12():
 	return """
 	SELECT bike_id
 	FROM trip
-	WHERE 
-		(SELECT COUNT(*)
-		FROM trip
-		JOIN station
-		ON trip.start_station_id = station.id
-		HAVING station.name = 'Mountain View Caltrain Station' OR station.name = 'Evelyn Park and Ride') > 1
-		AND 
-		(SELECT COUNT(*)
-		FROM trip
-		JOIN station
-		ON trip.end_station_id = station.id
-		HAVING station.name = 'Mountain View Caltrain Station' OR station.name = 'Evelyn Park and Ride') > 1;
+	JOIN station
+	ON trip.end_station_id = station.id
+	WHERE station.name = 'Evelyn Park and Ride'
+	INTERSECT
+	SELECT bike_id
+	FROM trip
+	JOIN station
+	ON trip.end_station_id = station.id
+	WHERE station.name = 'Mountain View Caltrain Station';
 	"""
 
 
 def query13():
 	return """
+	SELECT status.station_id, 
+	       s.name, 
+		   strftime('%H', status.time) as hour,
+		   ROUND(AVG(status.bikes_available), 2) as avg_bikes_available, 
+		   ROUND(AVG(status.docks_available), 2) as avg_docks_available
+	FROM station_status AS status
+	JOIN station s
+		ON status.station_id = s.id
+	GROUP BY hour, status.station_id
+	HAVING status.station_id = 46;
 	"""
 
 
