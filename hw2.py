@@ -13,26 +13,33 @@ import sys
 # make sure the program prints out your SQL statements correctly. That means the autograder will read you SQL correctly. Running the Python file will not execute your SQL statements (just prints them).
 
 def username():
-	return "hbenotma@purdue.edu" # Write your username here
+	return "flemin53@purdue.edu" # Write your username here
     
 def query1():
 	return """
-    Select *
-	FROM ABC
+  Select *
+	FROM trip t1
+	WHERE t1.duration = (SELECT MIN(t2.duration) FROM trip t2) OR t1.duration = (SELECT MAX(t3.duration) FROM trip t3);
 	"""
 
 def query2():
 	return """
-	
+	Select id, duration, start_station_id, end_station_id, bike_id, subscription_type, zip_code, start_d, end_d
+	FROM (SELECT *, MIN(duration) as mindur FROM trip GROUP BY DATE(start_d) HAVING duration = mindur
+		UNION
+		SELECT *, MAX(duration) as maxdur FROM trip GROUP BY DATE(start_d) HAVING duration = maxdur);
 	"""
 
 def query3():
 	return """
+  SELECT id, name, lat, long, dock_count, city, install_date
+	FROM (SELECT *, COUNT(*) as cnt FROM station GROUP BY dock_count HAVING cnt = 1);
 	"""
 
 	
 def query4():
 	return """
+	erm
 	"""
 
 
