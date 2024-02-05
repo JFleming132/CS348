@@ -87,7 +87,7 @@ def query5():
 	"""
 
 
-def query6():
+def query6(): #This one is wrong
 	return """
 	SELECT *
 	FROM (
@@ -113,7 +113,7 @@ def query6():
 	"""
 
 
-def query7():
+def query7(): #this one is wrong
 	return """
 	SELECT w1.zip_code, w1.max_temperature_f
 	FROM daily_weather w1
