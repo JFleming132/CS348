@@ -39,17 +39,77 @@ def query3():
 	
 def query4():
 	return """
-	erm
+	SELECT *
+	FROM (
+		SELECT s.id, s.name, ROUND(avg_docks_available/s.dock_count, 2) as percentage_docks_available
+		FROM station s
+		JOIN (
+			SELECT station_id, AVG(docks_available) as avg_docks_available
+			FROM station_status
+			GROUP BY station_id
+		) ss
+		ON ss.station_id = s.id
+		ORDER BY percentage_docks_available ASC
+	)
+	WHERE percentage_docks_available = (
+		SELECT MAX(ROUND(avg_docks_available/s.dock_count, 2))
+		FROM station s
+		JOIN (
+			SELECT station_id, AVG(docks_available) as avg_docks_available
+			FROM station_status
+			GROUP BY station_id
+		) ss
+		ON ss.station_id = s.id
+	) OR percentage_docks_available = (
+		SELECT MIN(ROUND(avg_docks_available/s.dock_count, 2))
+		FROM station s
+		JOIN (
+			SELECT station_id, AVG(docks_available) as avg_docks_available
+			FROM station_status
+			GROUP BY station_id
+		) ss
+		ON ss.station_id = s.id
+	);
 	"""
 
 
 def query5():
 	return """
+		SELECT s.id, s.name, s.dock_count, ROUND(avg_docks_available/s.dock_count, 2) as percentage_docks_available
+		FROM station s
+		JOIN (
+			SELECT station_id, AVG(docks_available) as avg_docks_available
+			FROM station_status
+			GROUP BY station_id
+		) ss
+		ON ss.station_id = s.id
+		WHERE dock_count < (SELECT AVG(dock_count) FROM station) AND percentage_docks_available < .5;
 	"""
 
 
 def query6():
 	return """
+	SELECT *
+	FROM (
+		SELECT id, zip_code, MAX(max_temperature_f) as max_temp
+		FROM (
+			SELECT *
+			FROM daily_weather
+			WHERE ((max_temperature_f/1) <> 0)
+		)
+		GROUP BY zip_code
+	) w1
+	JOIN (
+		SELECT id, zip_code, MAX(max_temperature_f) as max_temp
+		FROM (
+			SELECT *
+			FROM daily_weather
+			WHERE ((max_temperature_f/1) <> 0)
+		)
+		GROUP BY zip_code
+	) w2
+	ON w2.id < w1.id
+	WHERE w1.max_temp = w2.max_temp;
 	"""
 
 
