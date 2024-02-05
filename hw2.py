@@ -132,32 +132,157 @@ def query7():
 
 def query8():
 	return """
-	
+	SELECT s1.name, s2.name, COUNT(t.id) as trip_count, ROUND(AVG(t.duration), 2) as avg_duration
+	FROM trip t
+	JOIN station s1
+	ON t.start_station_id = s1.id
+	JOIN station s2
+	ON t.end_station_id = s2.id
+	GROUP BY t.start_station_id, t.end_station_id
+	ORDER BY trip_count DESC
+	LIMIT 1;
 	"""
 
 
 def query9():
 	return """
+	SELECT status.station_id, 
+	       s.name, 
+		   strftime('%H', status.time) as hour,
+		   ROUND(AVG(status.bikes_available), 2) as avg_bikes_available, 
+		   ROUND(AVG(status.docks_available), 2) as avg_docks_available
+	FROM station_status AS status
+	JOIN station s
+		ON status.station_id = s.id
+	GROUP BY hour, status.station_id
+	HAVING status.station_id = 46
+	ORDER BY avg_bikes_available ASC
+	LIMIT 1;
 	"""
 
 
 def query10():
 	return """
+	SELECT DISTINCT s1.name, s2.name, ROUND((SQRT(POW(s1.lat-s2.lat, 2) + POW(s1.long-s2.long, 2))), 6) as euclidian_distance
+	FROM station s1
+	JOIN station s2
+	ON s1.id <> s2.id AND s1.id < s2.id
+	WHERE euclidian_distance IN (
+		SELECT ROUND((SQRT(POW(s3.lat-s4.lat, 2) + POW(s3.long-s4.long, 2))), 6) as euclidian_distance
+		FROM station s3
+		JOIN station s4
+		ON s3.id <> s4.id AND s3.id < s4.id
+		ORDER BY euclidian_distance ASC
+		LIMIT 2
+	);
 	"""
 
 
 def query11():
 	return """
+	SELECT station.id as StationID, station.name,
+	COALESCE(
+		(
+			SELECT COUNT(*)
+			FROM (
+				SELECT trip.id 
+				FROM trip 
+				WHERE trip.start_station_id = station.id OR trip.end_station_id = station.id
+			)
+		),
+	0) as number_of_trips, (
+		SELECT ROUND(AVG(number_of_trips), 2)
+		FROM (
+			SELECT *,
+			COALESCE(
+				(
+					SELECT COUNT(*)
+					FROM (
+						SELECT trip.id 
+						FROM trip 
+						WHERE trip.start_station_id = station.id OR trip.end_station_id = station.id
+					)
+				),
+			0) as number_of_trips
+			FROM station
+			ORDER BY number_of_trips ASC
+		)
+	) as avg_number_of_trips, (
+		SELECT FORMAT('%.1f', MAX(number_of_trips))
+		FROM (
+			SELECT *,
+			COALESCE(
+				(
+					SELECT COUNT(*)
+					FROM (
+						SELECT trip.id 
+						FROM trip 
+						WHERE trip.start_station_id = station.id OR trip.end_station_id = station.id
+					)
+				),
+			0) as number_of_trips
+			FROM station
+			ORDER BY number_of_trips ASC
+		)
+	) as max_number_of_trips
+	FROM station
+	ORDER BY number_of_trips ASC
+	LIMIT 20;
 	"""
 
 
 def query12():
 	return """
+	SELECT s.id, s.name, s.city, qt.number_of_trips, ROUND(city_avg, 2) as city_avg, FORMAT('%.1f', city_max) as city_max
+	FROM station s
+	JOIN (
+		SELECT DISTINCT s.id, s.city, COUNT(t.id) as number_of_trips
+		FROM station s
+		JOIN (
+			SELECT *, s1.city as start_city, s2.city as end_city
+			FROM trip
+			JOIN station s1
+			ON start_station_id = s1.id
+			JOIN station s2
+			ON end_station_id = s2.id
+			WHERE start_city = end_city
+		) t
+		ON t.start_station_id = s.id OR t.end_station_id = s.id
+		GROUP BY s.id
+	) qt
+	ON s.id = qt.id
+	JOIN (
+		SELECT city, MAX(number_of_trips) as city_max, AVG(number_of_trips) as city_avg
+		FROM (
+			SELECT DISTINCT s.id, s.city, COUNT(t.id) as number_of_trips
+			FROM station s
+			JOIN (
+				SELECT *, s1.city as start_city, s2.city as end_city
+				FROM trip
+				JOIN station s1
+				ON start_station_id = s1.id
+				JOIN station s2
+				ON end_station_id = s2.id
+				WHERE start_city = end_city
+			) t
+			ON t.start_station_id = s.id OR t.end_station_id = s.id
+			GROUP BY s.id
+		)
+		GROUP BY city
+	) ct
+	ON s.city = ct.city
+	WHERE qt.number_of_trips <= 15
+	ORDER BY s.city, qt.number_of_trips;
 	"""
 
 
 def query13():
 	return """
+	SELECT s.city, NULLIF(SUM(t.subscription_type = 'Customer'), 0) as Customer, NULLIF(SUM(t.subscription_type = 'Subscriber'), 0) as Subscriber
+	FROM trip t
+	JOIN station s
+	ON t.start_station_id = s.id
+	GROUP BY s.city;
 	"""
 
 
