@@ -115,11 +115,24 @@ def query6():
 
 def query7():
 	return """
+	SELECT w1.zip_code, w1.max_temperature_f
+	FROM daily_weather w1
+	WHERE w1.max_temperature_f = (
+		SELECT MAX(w2.max_temperature_f)
+		FROM (
+			SELECT *
+			FROM daily_weather w3
+			WHERE ((max_temperature_f/1) <> 0)
+		) w2
+		GROUP BY zip_code
+		HAVING w2.zip_code = w1.zip_code
+	);
 	"""
 
 
 def query8():
 	return """
+	
 	"""
 
 
