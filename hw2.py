@@ -89,7 +89,7 @@ def query5():
 
 def query6(): #This one is wrong
 	return """
-	SELECT *
+	SELECT w1.zip_code, w1.max_temp, w2.zip_code, w2.max_temp
 	FROM (
 		SELECT id, zip_code, MAX(max_temperature_f) as max_temp
 		FROM (
@@ -115,7 +115,7 @@ def query6(): #This one is wrong
 
 def query7(): #this one is wrong
 	return """
-	SELECT w1.zip_code, w1.max_temperature_f
+	SELECT w1.zip_code, DATE(w1.date) as date, w1.max_temperature_f
 	FROM daily_weather w1
 	WHERE w1.max_temperature_f = (
 		SELECT MAX(w2.max_temperature_f)
