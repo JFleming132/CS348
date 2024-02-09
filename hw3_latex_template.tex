@@ -1,0 +1,106 @@
+% Only edit between \begin{questions} and \end{questions} tags.
+
+\documentclass[12pt]{exam}
+\usepackage[utf8]{inputenc}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{multicol}
+\usepackage{listings}
+\usepackage{enumerate}
+\usepackage{blindtext}
+\usepackage{scrextend}
+\usepackage{graphicx}
+\usepackage{comment}
+
+\def\ojoin{\setbox0=\hbox{$\bowtie$}%
+  \rule[-.02ex]{.25em}{.4pt}\llap{\rule[\ht0]{.25em}{.4pt}}}
+\def\leftouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie}}
+\def\rightouterjoin{\mathbin{\bowtie\mkern-5.8mu\ojoin}}
+\def\fullouterjoin{\mathbin{\ojoin\mkern-5.8mu\bowtie\mkern-5.8mu\ojoin}}
+
+
+\renewcommand{\choiceshook}{%
+    \setlength{\leftmargin}{15pt}%
+}
+\title{CS 348 - Homework 3 }
+\author{Relational Algebra}
+\date{Spring 2024}
+
+\begin{document}
+
+\maketitle
+\noindent
+Write your answers for questions 1 to 9 in this latex file. Use a latex editor, such as overleaf to edit and compile your latex to a PDF file. Submit your latex file to Brightspace. Submit your PDF file to Gradescope. Question 1 includes all relational algebra operators and symbols that you can use in your answers.
+
+
+\begin{questions}
+\question 
+
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... %	
+    $ a \leftarrow \pi_{A, B}(R\bowtie S)$ \\
+    $ b \leftarrow \pi_{A, B}(R\bowtie_{R.A=S.A} S)$ \\
+    $\pi_{A, B}(R\times S)$ \\
+    $\pi_{A, B}((\sigma_{R.A=123 \; and \; S.B <= 20000}(R\bowtie S))$ \\
+    $\pi_{A, B}((\sigma_{R.A=123 \; or \; S.B<=20000}(R\bowtie S))$ \\
+    $\pi_{A, B}(R\leftouterjoin S)$ \\
+    $\pi_{A, B}(R\rightouterjoin S)$ \\
+    $\pi_{A, B}(R\fullouterjoin S)$ \\
+    $R \cap S \cup T - U $ \\
+    
+\vspace{50 mm}
+	
+\question 
+
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... %	
+\vspace{50 mm}
+
+\question 
+
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... %	
+\vspace{50 mm}
+
+\question 
+
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... %	
+\vspace{50 mm}
+
+\question 
+
+\textbf{Answer:}  \\
+    %.........  Write your answer   ..... %	
+\vspace{50 mm}
+
+\question 
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... %	
+\vspace{50 mm}
+
+\question 
+
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... %	
+\vspace{50 mm}
+
+\question 
+
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... %	
+\vspace{50 mm}
+
+\question 
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... %	
+\vspace{50 mm}
+
+
+\end{questions}
+\bigskip 
+\noindent
+
+
+\end{document}
