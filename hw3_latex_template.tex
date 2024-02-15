@@ -48,53 +48,61 @@ Write your answers for questions 1 to 9 in this latex file. Use a latex editor, 
     $\pi_{A, B}(R\rightouterjoin S)$ \\
     $\pi_{A, B}(R\fullouterjoin S)$ \\
     $R \cap S \cup T - U $ \\
-    
+    $\sigma_{trip.id <= 7450}(trip)$ \\
 \vspace{50 mm}
 	
 \question 
 
 \textbf{Answer:} \\
     %.........  Write your answer   ..... %	
+    
 \vspace{50 mm}
 
 \question 
 
 \textbf{Answer:} \\
     %.........  Write your answer   ..... %	
+    $\pi _{origin\_station, start\_d, duration, destination\_station} (trips \bowtie (\rho_{name\rightarrow origin\_station}(\rho_{id\rightarrow start\_station\_id}(station))) \bowtie (\rho_{name\rightarrow destination\_station}(\rho_{id\rightarrow end\_station\_id}(station))))$ \\
 \vspace{50 mm}
 
 \question 
 
 \textbf{Answer:} \\
     %.........  Write your answer   ..... %	
+    $\pi_{bike_id} ((\sigma_{station.name="Mountain View Caltrain Station"} (trip \bowtie_{trip.id=station.end\_station\_id} station)) \cap (\sigma_{station.name="Evelyn Park and Ride"} (trip \bowtie_{trip.id=station.end\_station\_id} station)))$ \\
 \vspace{50 mm}
 
 \question 
 
 \textbf{Answer:}  \\
     %.........  Write your answer   ..... %	
+    $\pi_{station.id, station.name, trip.id, trip.duration} (station \leftouterjoin_{station.id=trip.end_station_id} trip)$ \\
 \vspace{50 mm}
 
 \question 
 \textbf{Answer:} \\
     %.........  Write your answer   ..... %	
-\vspace{50 mm}
-
-\question 
-
-\textbf{Answer:} \\
-    %.........  Write your answer   ..... %	
+    $\pi_{station.id, station.name} (station) - \pi_{station.id, station.name} (station \bowtie_{station.id=trip.start\_station\_id} trip)$ \\
 \vspace{50 mm}
 
 \question 
 
 \textbf{Answer:} \\
     %.........  Write your answer   ..... %	
+    $\pi_{s1.name, s1.id, s2.name, s2.id} (\rho_{s1} (station) \times \rho_{s2} (station)) - \pi_{s1.name, s1.id, s2.name, s2.id} ((\rho_{s1} (station) \times \rho_{s2} (station)) \bowtie_{s1.id=start\_station\_id \; and \; s2.id=end\_station\_id} trip)$\\
+\vspace{50 mm}
+
+\question 
+
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... %	
+    $\pi_{station\_status.station\_id, station.name, station\_status.time} (\sigma_{station\_status.docks\_available=station.dock\_count} (station\_status \bowtie_{station\_status.station\_id=station.id} station))$\\
 \vspace{50 mm}
 
 \question 
 \textbf{Answer:} \\
     %.........  Write your answer   ..... %	
+    $trips - \pi_{t1} (\rho_{t1} (trips) \bowtie_{t2.duration > t1.duration} \rho_{t2} (trips)))$\\
 \vspace{50 mm}
 
 
