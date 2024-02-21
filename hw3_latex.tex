@@ -39,15 +39,6 @@ Write your answers for questions 1 to 9 in this latex file. Use a latex editor, 
 
 \textbf{Answer:} \\
     %.........  Write your answer   ..... %	
-    $ a \leftarrow \pi_{A, B}(R\bowtie S)$ \\
-    $ b \leftarrow \pi_{A, B}(R\bowtie_{R.A=S.A} S)$ \\
-    $\pi_{A, B}(R\times S)$ \\
-    $\pi_{A, B}((\sigma_{R.A=123 \; and \; S.B <= 20000}(R\bowtie S))$ \\
-    $\pi_{A, B}((\sigma_{R.A=123 \; or \; S.B<=20000}(R\bowtie S))$ \\
-    $\pi_{A, B}(R\leftouterjoin S)$ \\
-    $\pi_{A, B}(R\rightouterjoin S)$ \\
-    $\pi_{A, B}(R\fullouterjoin S)$ \\
-    $R \cap S \cup T - U $ \\
     $\sigma_{trip.id <= 7450}(trip)$ \\
 \vspace{50 mm}
 	
@@ -55,7 +46,7 @@ Write your answers for questions 1 to 9 in this latex file. Use a latex editor, 
 
 \textbf{Answer:} \\
     %.........  Write your answer   ..... %	
-    
+    $\sigma_{trip.id <= 7450}(trip)$ \\
 \vspace{50 mm}
 
 \question 
@@ -105,6 +96,20 @@ Write your answers for questions 1 to 9 in this latex file. Use a latex editor, 
     $trips - \pi_{t1} (\rho_{t1} (trips) \bowtie_{t2.duration > t1.duration} \rho_{t2} (trips)))$\\
 \vspace{50 mm}
 
+\question 
+\textbf{Answer:} \\
+    %.........  Write your answer   ..... 
+    b. The resulting number of tuples will always be n. Since the union operator does not include duplicates, and $\pi_{A} S$ is a subset of $\pi_{A} R$, there will always be exactly n tuples. \\
+    \\
+    c. Minimum: 0. The minimum case occurs when n = m and B = C. Set differences cannot be calculated on sets that have different attributes, so B must be the same attributes as C and must be associated with the same keys.\\
+    Maximum: n. If there exists no element in S where the attribute associated with the key in S is the same as the attribute associated with the key in R, then nothing will be removed from R.\\
+    \\
+    d. Minimum: 0. The minimum case occurs when there is one element in S and one element in R, both with the same key. Since there is no S.A strictly greater than any given R.A, nothing will be joined. \\
+    Maximum: n * $\sum_{\i=0}^{m-1}i$. The maximum case occurs when every key in R appears in S. As such, for each key in A, we will join every key in S greater than the key in A, resulting in the given sum. \\
+    \\
+    e. Minimum: 1. The minimum case occurs when R and S have one element, and so only one combination of keys exists. \\
+    Maximum: $m^2$. The maximum case occurs when n = m.
+\vspace{50 mm}
 
 \end{questions}
 \bigskip 
