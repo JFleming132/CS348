@@ -6,11 +6,11 @@ const cors =  require('cors')
 const app = express()
 
 const db=mysql.createConnection({
-    host:"localhost",
+    host:"34.69.74.65",
     port:"3306",
     user:"root",
-    password:"root",
-    database:"cs348project"
+    password:"rootpwd",
+    database:"storefrontWebapp"
 })
 
 db.connect(function(err) {
