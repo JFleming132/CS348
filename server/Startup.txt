@@ -1,0 +1,5 @@
+to start the website:
+
+1. Open mysql server
+2. cd into backend and run "node index.js" to run the backend
+3. cd into client and run "npm start dev" to run the client dev server
