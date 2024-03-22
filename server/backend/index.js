@@ -53,9 +53,9 @@ app.get("/api/warehouses",(req,res)=>{
     })
 })
 
-app.get("/api/trips",(req,res)=>{
+app.get("/api/trips",(req,res)=>{ //natural join the truck, driver, and warehouse tables
     console.log("sending trip table query data");
-    const q = "SELECT * FROM trip"
+    const q = "SELECT * FROM trip ORDER BY id ASC"
     db.query(q,(err,data)=>{
         if(err) return res.json(err)
         //console.log(data)
@@ -63,9 +63,11 @@ app.get("/api/trips",(req,res)=>{
     })
 })
 
-app.post("/api/trips",(req,res)=>{
+app.post("/api/trips/add",(req,res)=>{
     console.log("recieved form from react for trips");
-    //this function needs to successfully add, edit, and delete trips from the database based on the request
+    console.log(req.body);
+    const q = `INSERT INTO trip VALUES ( ${req.body.id}, ${req.body.driver}, ${req.body.truck}, ${req.body.description}, FORMAT(${req.body.startTime}, \'yyyy-MM-ddTHH:mm:ss\'), FORMAT(${req.body.endTime}, \'yyyy-MM-ddTHH:mm\'), ${req.body.startWarehouse}, ${req.body.destinationWarehouse})`
+    //verify that the q string is correct, then send it to the database and verify that its sendign properly
 })
 
 app.listen(8800,()=>{

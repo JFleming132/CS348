@@ -27,17 +27,38 @@ function App() {
     }
 
     const submitTripForm = (e) => {
+        let newID = 0;
+        fetch("/api/trips").then(response => response.json()).then(data => {
+            console.log(data);
+            data.forEach(trip => {
+                if (trip.id == newID) {
+                    newID = trip.id + 1;
+                }
+                const formData = new FormData(e.target.form);
+                let queryData = Object.fromEntries(formData.entries());
+                queryData = {...queryData, id:newID, description:"random description"};
+                console.log(queryData);
+                if ((queryData.startTime == "") ||
+                (queryData.endTime == "") ||
+                (queryData.driver == null) ||
+                (queryData.truck == null) ||
+                (queryData.startWarehouse == null) ||
+                (queryData.destinationWarehouse == null)) {
+                    console.log("invalid trip");
+                    return;
+                }
+                const requestOptions = {
+                    method: "POST",
+                    headers: {
+                    "Content-Type":"application/json"
+                    },
+                    body: JSON.stringify(queryData)
+                }
+                fetch("api/trips/add", requestOptions);
+            })
+        })
         e.preventDefault();
-        const formData = new FormData(e.target.form);
-        console.log(Object.fromEntries(formData.entries()));
-        const requestOptions = {
-            method: "POST",
-            headers: {
-            "Content-Type":"application/json"
-            },
-            body: JSON.stringify(Object.fromEntries(formData.entries()))
-        }
-        fetch("api/trips", requestOptions);
+        
     }
 
     return (
