@@ -12,58 +12,88 @@ function App() {
     const [endWarehouseSelection, setEndWarehouseSelection] = React.useState({});
     const [startTime, setStartTime] = React.useState({});
     const [endTime, setEndTime] = React.useState({});
+    const [tripID, setTripID] = React.useState({});
+    const [doUpdateBool, setDoUpdateBool] = React.useState(false);
 
     const driverChange = (newVal) => {
+        //console.log(newVal);
         setDriverSelection(newVal);
     }
     const truckChange = (newVal) => {
+        //console.log(newVal);
         setTruckSelection(newVal);
     }
     const startWarehouseChange = (newVal) => {
+        //console.log(newVal);
         setStartWarehouseSelection(newVal);
     }
     const endWarehouseChange = (newVal) => {
+        //console.log(newVal);
         setEndWarehouseSelection(newVal);
     }
 
     const submitTripForm = (e) => {
-        let newID = 0;
-        fetch("/api/trips").then(response => response.json()).then(data => {
-            console.log(data);
-            data.forEach(trip => {
-                if (trip.id == newID) {
-                    newID = trip.id + 1;
-                }
-                const formData = new FormData(e.target.form);
-                let queryData = Object.fromEntries(formData.entries());
-                queryData = {...queryData, id:newID, description:"random description"};
-                console.log(queryData);
-                if ((queryData.startTime == "") ||
-                (queryData.endTime == "") ||
-                (queryData.driver == null) ||
-                (queryData.truck == null) ||
-                (queryData.startWarehouse == null) ||
-                (queryData.destinationWarehouse == null)) {
-                    console.log("invalid trip");
-                    return;
-                }
-                const requestOptions = {
-                    method: "POST",
-                    headers: {
-                    "Content-Type":"application/json"
-                    },
-                    body: JSON.stringify(queryData)
-                }
-                fetch("api/trips/add", requestOptions);
-            })
-        })
         e.preventDefault();
-        
+        let newID = 0;
+        //console.log("form submitted")
+        //console.log(doUpdateBool);
+        if (!doUpdateBool) {
+            fetch("/api/getNewTripID").then(response => response.json()).then(data => {
+                newID = 999;
+            })
+        } else {
+            console.log("parsing id from state")
+            newID = parseInt(tripID);
+        }
+        const formData = new FormData(e.target.form);
+        let queryData = Object.fromEntries(formData.entries());
+        queryData = {driver:driverSelection, truck:truckSelection, startWarehouse:startWarehouseSelection, destinationWarehouse:endWarehouseSelection, id:newID, description:"random description"};
+        if ((startTime == "") ||
+        (endTime == "") ||
+        (startTime == null) ||
+        (endTime == null) ||
+        (queryData.driver == null) ||
+        (queryData.truck == null) ||
+        (queryData.startWarehouse == null) ||
+        (queryData.destinationWarehouse == null)) {
+            alert("invalid trip");
+            //console.log(queryData);
+            return;
+        }
+        console.log(queryData);
+        queryData = {...queryData, startTime:startTime.replace("T", " ") + ":00", endTime:endTime.replace("T", " ") + ":00"}
+        const requestOptions = {
+            method: "POST",
+            headers: {
+            "Content-Type":"application/json"
+            },
+            body: JSON.stringify(queryData)
+        }
+        if (!doUpdateBool) {
+            fetch("api/trips/add", requestOptions).then(response=>response.json()).then(data => {
+                //console.log(data);
+                if (data.errno) {
+                    alert("SQL error. Errno: " + data.errno)
+                } else {
+                    window.location.reload();
+                }
+            })
+        }
+        else {
+            fetch("api/trips/edit", requestOptions).then(response=>response.json()).then(data =>{
+                //console.log(data);
+                if (data.errno) {
+                    alert("SQL error. Errno: " + data.errno)
+                } else {
+                    window.location.reload();
+                }
+            })
+        }
     }
 
     return (
         <div>
-            <form>
+            <form onSubmit={submitTripForm}>
                 <div>
                     Driver:
                     <DriversDropdown name="driver" onChange={driverChange}/>
@@ -81,13 +111,19 @@ function App() {
                     <WarehouseDropdown name="destinationWarehouse" onChange={endWarehouseChange}/>
                 </div>
                 <div>
-                    Start time: <input name="startTime" type="datetime-local" onChange = {e => (setStartTime(e.target.value))}/>
+                    Start time: <input name="startTime" type="datetime-local" onChange = {e => {setStartTime(e.target.value)}}/>
                 </div>
                 <div>
                     End time: <input name="endTime" type="datetime-local" onChange = {e => (setEndTime(e.target.value))}/>
                 </div>
                 <div>
-                    <button type="submit" onClick={submitTripForm}>Add trip</button>
+                    Update existing trip? <input name="updateBool" type="checkbox" checked={doUpdateBool} onChange={() => setDoUpdateBool(!doUpdateBool)}/>
+                </div>
+                <div>
+                    TripID to update (optional): <input name="tripID" type="number" onChange = {e=>setTripID(e.target.value)}/>
+                </div>
+                <div>
+                    <button type="submit">Add trip</button>
                 </div>
             </form>
             <Triplist/>

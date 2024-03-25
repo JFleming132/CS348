@@ -11,7 +11,7 @@ const TrucksDropdown = ({onChange, name}) => {
   //test array of objects where the property is the column and the value of that property is the value of the column
   //we need to map these objects to components for displaying.
   return (
-    <select name={name} onChange={e => onChange(e.target.data)}>
+    <select name={name} onChange={e => {onChange(e.target.value)}}>
       <option disabled selected value> -- select an option -- </option>
       {trucks.map(truck => (
         <option value={truck.plateNumber}>{truck.make} {truck.model}, Plate Number: {truck.plateNumber}</option>
