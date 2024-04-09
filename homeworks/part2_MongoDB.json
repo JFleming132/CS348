@@ -1,0 +1,282 @@
+For questions 11 to 18, consider the Movies and Comments collections provided with this homework (sources for the data sets are extracted from MongoDB Atlas Sample Mflix Dataset). The movies collection contains movies' information such as directors, cast, imdb ratings and awards etc. The comments collection includes information about the users' names and comments on those movies.
+ٍ
+To upload the collections to MongoDB, use the mongoimport command as follows:
+mongoimport --db dbhw7 --collection movies --file movies.json
+mongoimport --db dbhw7 --collection comments --file comments.json
+
+If the mongoimport utility is not installed, check the MongoDb dcoumentation about how to install it.
+
+(5 points for each question)
+
+11 - (4 points) List titles, plot for movies on year 1928. (use "year" rather than "released" to determine the year)
+
+Expected Output:
+{
+plot: "A family saga in which three of a Bavarian widow's sons go to war for Germany and the fourth goes to America, Germany's eventual opponent.",
+title: 'Four Sons'
+},
+{
+plot: 'A professional clown and a self-indulgent count learn to help each other with their problems, but then become romantic rivals.',
+title: 'Laugh, Clown, Laugh'
+},
+{
+plot: 'In 1918 a simple Mongolian herdsman escapes to the hills after brawling with a western capitalist fur trader who cheats him. In 1920 he helps the partisans fight for the Soviets against the...',
+title: 'Storm Over Asia'
+},
+{
+plot: 'A woman on the run from the law finds her past catching up to her just as she is on the verge of true happiness.',
+title: 'Street Angel'
+},
+{
+plot: 'Mickey Mouse, piloting a steamboat, delights his passenger, Minnie, by making musical instruments out of the menagerie on deck.',
+title: 'Steamboat Willie'
+},
+{
+plot: 'A young impoverished aristocrat falls in love with an inn-keepers daughter, but has to marry money.',
+title: 'The Wedding March'
+},
+{
+plot: 'A charming, happy-go-lucky bandit in old Arizona plays cat-and-mouse with the sheriff trying to catch him while he romances a local beauty.',
+title: 'In Old Arizona'
+},
+{
+plot: 'This short experimental film tells the story of a man who comes to Hollywood to become a star, only to fail and be dehumanized (he is identified by the number 9314 written on his forehead),...',
+title: 'The Life and Death of 9413, a Hollywood Extra'
+}
+
+
+-----------------------------------------------
+12 - (4 points)  List title, and awards.wins of movies which had over 200 awards (i.e., awards.wins > 200).
+
+
+Expected Output:
+  { title: 'Gravity', awards_wins: 231 },
+  { title: '12 Years a Slave', awards_wins: 267 },
+  {
+    title: 'Birdman: Or (The Unexpected Virtue of Ignorance)',
+    awards_wins: 210
+  }
+
+
+------------------------------------------------
+13 - (5 points) List title, imdb rating and imdb votes for movies whose imdb rating is larger than 9.0 and have over 100 imdb votes.
+
+Expected Output:
+  { imdb: { rating: 9.2, votes: 1038358 }, title: 'The Godfather' },
+  {
+    imdb: { rating: 9.1, votes: 700857 },
+    title: 'The Godfather: Part II'
+  },
+  { title: 'Hollywood', imdb: { rating: 9.1, votes: 511 } },
+  { title: 'Cosmos', imdb: { rating: 9.3, votes: 17174 } },
+  { title: 'The Decalogue', imdb: { rating: 9.2, votes: 10958 } },
+  { title: 'The Civil War', imdb: { rating: 9.4, votes: 4625 } },
+  { title: 'Baseball', imdb: { rating: 9.1, votes: 2460 } },
+  { title: 'Pride and Prejudice', imdb: { rating: 9.1, votes: 45725 } },
+  { title: 'Band of Brothers', imdb: { rating: 9.6, votes: 183802 } },
+  {
+    imdb: { rating: 9.3, votes: 1513145 },
+    title: 'The Shawshank Redemption'
+  },
+  { title: 'The Civil War', imdb: { rating: 9.4, votes: 4624 } },
+  { title: 'The Blue Planet', imdb: { rating: 9.2, votes: 7093 } },
+  { title: 'Planet Earth', imdb: { rating: 9.5, votes: 82896 } },
+  { title: 'Life', imdb: { rating: 9.2, votes: 16807 } },
+  { title: 'Human Planet', imdb: { rating: 9.2, votes: 9057 } },
+  { title: 'Frozen Planet', imdb: { rating: 9.2, votes: 5903 } },
+  { title: 'Over the Garden Wall', imdb: { rating: 9.2, votes: 4139 } }
+
+
+-------------------------------------
+14 - (5 points) Use MongoDB aggregates to list directors and the count of 1915-1920 movies they had directed (movie year is between 1915 to 1920 inclusive). Only include directors who had movies in that time span.
+
+
+Expected Output:
+  { _id: 'Reginald Barker', count_of_movies: 2 },
+  { _id: 'Hal Roach', count_of_movies: 2 },
+  { _id: 'Maurice Tourneur', count_of_movies: 2 },
+  { _id: 'John Emerson', count_of_movies: 1 },
+  { _id: 'Lois Weber', count_of_movies: 1 },
+  { _id: 'Raymond B. West', count_of_movies: 1 },
+  { _id: 'Walter Edwards', count_of_movies: 1 },
+  { _id: 'Edward F. Cline', count_of_movies: 1 },
+  { _id: 'Buster Keaton', count_of_movies: 1 },
+  { _id: 'Phillips Smalley', count_of_movies: 1 },
+  { _id: 'Winchell Smith', count_of_movies: 1 },
+  { _id: 'Thomas H. Ince', count_of_movies: 1 },
+  { _id: 'Norbert A. Myles', count_of_movies: 1 },
+  { _id: 'Herbert Blachè', count_of_movies: 1 },
+  { _id: 'David Hartford', count_of_movies: 1 },
+  { _id: 'J. Parker Read Jr.', count_of_movies: 1 },
+  { _id: 'Alfred J. Goulding', count_of_movies: 1 },
+  { _id: 'Jay Hunt', count_of_movies: 1 },
+  { _id: 'Raoul Walsh', count_of_movies: 1 }
+
+
+---------------------------------------
+15 - (8 points) Find users with more than 250 comments. List the user name, number of comments, and the average imdb rating for the movies the user has comments for.
+
+Expected Output:
+  {
+    _id: 'The High Sparrow',
+    count_of_comments: 256,
+    average_movie_ratings: 6.996875
+  },
+  {
+    _id: 'Robert Jordan',
+    count_of_comments: 251,
+    average_movie_ratings: 7.0228
+  },
+  {
+    _id: 'Missandei',
+    count_of_comments: 252,
+    average_movie_ratings: 6.981349206349206
+  },
+  {
+    _id: 'Mace Tyrell',
+    count_of_comments: 268,
+    average_movie_ratings: 7.029477611940298
+  },
+  {
+    _id: 'Rodrik Cassel',
+    count_of_comments: 254,
+    average_movie_ratings: 6.93503937007874
+  }
+
+--------------------------------------------------------
+16- (8 points) List actors who have 3 or more movies in 1996. 
+
+Expected Output (row order is not important):
+{ _id: 'Demi Moore', CountOfMovies: 5 },
+{ _id: 'Lili Taylor', CountOfMovies: 4 },
+{ _id: 'Faye Dunaway', CountOfMovies: 4 },
+{ _id: 'Jet Li', CountOfMovies: 4 },
+{ _id: 'Stockard Channing', CountOfMovies: 4 },
+{ _id: 'Karen Sillas', CountOfMovies: 4 },
+{ _id: 'Karen Mok', CountOfMovies: 4 },
+{ _id: 'Andy Garcia', CountOfMovies: 4 },
+{ _id: 'William Petersen', CountOfMovies: 4 },
+{ _id: 'Ching Wan Lau', CountOfMovies: 4 }
+
+ 
+-----------------------------------------
+17) (8 points) Find users with 35 or more comments on Crime movies. 
+
+Expected Output (row order is not important):
+  { comment_count: 37, name: 'Missandei' },
+  { comment_count: 39, name: 'Anthony Hurst' },
+  { comment_count: 44, name: 'Rodrik Cassel' },
+  { comment_count: 38, name: 'Kevan Lannister' },
+  { comment_count: 41, name: 'Donna Russell' },
+  { comment_count: 36, name: 'Andrea Le' },
+  { comment_count: 41, name: 'Mace Tyrell' },
+  { comment_count: 38, name: 'Mary Mitchell' },
+  { comment_count: 37, name: 'Tommen Baratheon' },
+  { comment_count: 36, name: 'Blake Sellers' },
+  { comment_count: 39, name: 'Ashlee Hart' }
+
+
+
+18) (8 points) Find any movie whose director is also an actor/actress in the movie. 
+
+Expected Output (row order is not important):
+  {
+    _id: ObjectId('573a1390f29313caabcd4803'),
+    title: 'Winsor McCay, the Famous Cartoonist of the N.Y. Herald and His Moving Comics',
+    directors: 'Winsor McCay'
+  },
+  {
+    _id: ObjectId('573a1390f29313caabcd50e5'),
+    title: 'Gertie the Dinosaur',
+    directors: 'Winsor McCay'
+  },
+  {
+    _id: ObjectId('573a1391f29313caabcd6e2a'),
+    title: 'One Week',
+    directors: 'Buster Keaton'
+  },
+  {
+    _id: ObjectId('573a1391f29313caabcd7616'),
+    title: 'Salomè',
+    directors: 'Alla Nazimova'
+  },
+  {
+    _id: ObjectId('573a1391f29313caabcd79e4'),
+    title: 'Three Ages',
+    directors: 'Buster Keaton'
+  },
+  {
+    _id: ObjectId('573a1391f29313caabcd7f11'),
+    title: "Grass: A Nation's Battle for Life",
+    directors: 'Merian C. Cooper'
+  },
+  {
+    _id: ObjectId('573a1391f29313caabcd7f11'),
+    title: "Grass: A Nation's Battle for Life",
+    directors: 'Ernest B. Schoedsack'
+  },
+  {
+    _id: ObjectId('573a1391f29313caabcd8cf4'),
+    title: 'Steamboat Willie',
+    directors: 'Walt Disney'
+  },
+  {
+    _id: ObjectId('573a1391f29313caabcd8d7b'),
+    title: 'The Wedding March',
+    directors: 'Erich von Stroheim'
+  },
+  {
+    _id: ObjectId('573a1392f29313caabcd99a3'),
+    title: 'The Blue Light',
+    directors: 'Leni Riefenstahl'
+  },
+  {
+    _id: ObjectId('573a1392f29313caabcd9bf5'),
+    title: 'Movie Crazy',
+    directors: 'Harold Lloyd'
+  },
+  {
+    _id: ObjectId('573a1392f29313caabcdadb7'),
+    title: 'Der Kaiser von Kalifornien',
+    directors: 'Luis Trenker'
+  },
+  {
+    _id: ObjectId('573a1392f29313caabcdae3d'),
+    title: 'Modern Times',
+    directors: 'Charles Chaplin'
+  },
+  {
+    _id: ObjectId('573a1392f29313caabcdaf1c'),
+    title: 'The Story of a Cheat',
+    directors: 'Sacha Guitry'
+  },
+  {
+    _id: ObjectId('573a1392f29313caabcdb3c7'),
+    title: 'The Pearls of the Crown',
+    directors: 'Sacha Guitry'
+  },
+  {
+    _id: ObjectId('573a1392f29313caabcdb56d'),
+    title: 'Der zerbrochene Krug',
+    directors: 'Emil Jannings'
+  },
+  {
+    _id: ObjectId('573a1392f29313caabcdbe09'),
+    title: 'Tevya',
+    directors: 'Maurice Schwartz'
+  },
+  {
+    _id: ObjectId('573a1393f29313caabcdc030'),
+    title: 'The Great Dictator',
+    directors: 'Charles Chaplin'
+  },
+  {
+    _id: ObjectId('573a1393f29313caabcdc370'),
+    title: 'The Blood of Jesus',
+    directors: 'Spencer Williams'
+  },
+  {
+    _id: ObjectId('573a1393f29313caabcdc50e'),
+    title: 'The Land',
+    directors: 'Robert J. Flaherty'
+  }
