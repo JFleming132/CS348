@@ -5,14 +5,17 @@ instr = '''Instructions:
 
 def query1():
 	return """
+db.movies.find( { year: 1928 }, {_id: 0, title: 1, plot: 1 } )
 	"""
 
 def query2():
 	return """
+ db.movies.find( { "awards.wins": { $gt: 200 } }, { _id: 0, title: 1, "awards.wins": 1 } )
 	"""
 
 def query3():
 	return """
+db.movies.find({$and: [ {"imdb.rating": { $gt: 9.0}}, {"imdb.votes": { $gt: 100}} ]}, { _id: 0, title: 1, "imdb.rating": 1, "imdb.votes": 1 } )
 	"""
 
 def query4():
