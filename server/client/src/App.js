@@ -4,6 +4,7 @@ import DriversDropdown from "./components/DriversDropdown.js"
 import TrucksDropdown from "./components/TrucksDropdown.js"
 import WarehouseDropdown from "./components/WarehouseDropdown.js"
 import Triplist from "./components/Triplist.js"
+import TripsFilter from "./components/TripsFilter.js"
 
 function App() {
     const [driverSelection, setDriverSelection] = React.useState({});
@@ -127,6 +128,7 @@ function App() {
                 </div>
             </form>
             <Triplist/>
+            <TripsFilter/>
         </div>
     )
 }
