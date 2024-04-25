@@ -128,7 +128,9 @@ function App() {
                 </div>
             </form>
             <Triplist/>
-            <TripsFilter/>
+            <div style={{marginTop:"10vh"}}>
+                <TripsFilter/>
+            </div>
         </div>
     )
 }

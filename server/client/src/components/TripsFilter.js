@@ -11,8 +11,6 @@ const TripsFilter = () => {
     const [startDateMax, updateStartDateMax] = useState(undefined);
     const [endDateMin, updateEndDateMin] = useState(undefined);
     const [endDateMax, updateEndDateMax] = useState(undefined);
-    const [durationMin, updateDurationMin] = useState(undefined);
-    const [durationMax, updateDurationMax] = useState(undefined);
     const [trips, setTrips] = useState([]);
 
     const handleSubmit = (e) => {
@@ -28,8 +26,6 @@ const TripsFilter = () => {
             startDateMax:startDateMax,
             endDateMin:endDateMin,
             endDateMax:endDateMax,
-            durationMin:durationMin,
-            durationMax:durationMax,
         }
         console.log(filterOptions);
         const requestOptions = {
@@ -54,21 +50,41 @@ const TripsFilter = () => {
         <div>
             Trucks Search Filters
             <form onSubmit={handleSubmit}>
-                Minimum Trip ID
-                <input name="minIDInput" type="number" onChange={e=>{updateMinID(parseInt(e.target.value))}}/>
-                Maximum Trip ID
-                <input name="maxIDInput" type="number" onChange={e=>{updateMaxID(parseInt(e.target.value))}}/>
-                Start Warehouse ID
-                <input name="startWarehouseID" type="number" onChange={e=>{updateFromWarehouseID(parseInt(e.target.value))}}/>
-                Destination Warehouse ID
-                <input name="endWarehouseID" type="number" onChange={e=>{updateToWarehouseID(parseInt(e.target.value))}}/>
-                Driver License Number
-                <input name="driverID" type="text" onChange={e=>{updateDriverID(e.target.value)}}/>
-                Truck Plate Number
-                <input name="truckID" type="text" onChange={e=>{updateTruckID(e.target.value)}}/>
+                <div>
+                    Minimum Trip ID
+                    <input name="minIDInput" type="number" onChange={e=>{updateMinID(parseInt(e.target.value))}}/>
+                    Maximum Trip ID
+                    <input name="maxIDInput" type="number" onChange={e=>{updateMaxID(parseInt(e.target.value))}}/>
+                </div>
+                <div>
+                    Start Warehouse ID
+                    <input name="startWarehouseID" type="number" onChange={e=>{updateFromWarehouseID(parseInt(e.target.value))}}/>
+                    Destination Warehouse ID
+                    <input name="endWarehouseID" type="number" onChange={e=>{updateToWarehouseID(parseInt(e.target.value))}}/>
+                </div>
+                <div>
+                    Driver License Number
+                    <input name="driverID" type="text" onChange={e=>{updateDriverID(e.target.value)}}/>
+                </div>
+                <div>
+                    Truck Plate Number
+                    <input name="truckID" type="text" onChange={e=>{updateTruckID(e.target.value)}}/>
+                </div>
+                <div>
+                    Departing After:
+                    <input name="startDateMin" type="datetime-local" onChange={e=>{updateStartDateMin(e.target.value.replace("T", " ").slice(0, 19))}}/>
+                    Departing Before:
+                    <input name="startDateMax" type="datetime-local" onChange={e=>{updateStartDateMax(e.target.value.replace("T", " ").slice(0, 19))}}/>
+                </div>
+                <div>
+                    Arriving After:
+                    <input name="endDateMin" type="datetime-local" onChange={e=>{updateEndDateMin(e.target.value.replace("T", " ").slice(0, 19))}}/>
+                    Arriving Before:
+                    <input name="endDateMax" type="datetime-local" onChange={e=>updateEndDateMax(e.target.value.replace("T", " ").slice(0, 19))}/>
+                </div>
                 <button>Search</button>
             </form>
-            <table>
+            <table border="1">
                 <tr>
                     <th>Trip ID</th>
                     <th>Driver Name</th>
@@ -78,10 +94,17 @@ const TripsFilter = () => {
                     <th>Departure Time</th>
                     <th>Arrival Time</th>
                     <th>Trip Duration</th>
-                    <th>Overlapping Trips</th>
+                    <th>
+                        <div>Overlapping Trips</div> 
+                        <div>with the same truck</div>
+                    </th>
+                    <th>
+                        <div>Overlapping Trips</div> 
+                        <div>with the same driver</div>
+                    </th>
                 </tr>
                 {trips.map(trip => {
-                //console.log(trip);
+                console.log(trip);
                     return (
                         <tr>
                             <td>{trip.id}</td>
@@ -92,7 +115,8 @@ const TripsFilter = () => {
                             <td>{trip.startTime}</td>
                             <td>{trip.endTime}</td>
                             <td>{trip.duration}</td>
-                            
+                            <td>{trip.conflictingTruckTrips}</td>
+                            <td>{trip.conflictingDriverTrips}</td>
                         </tr>
                     )
             })}

@@ -3,7 +3,7 @@ const mysql = require('mysql')
 const cors =  require('cors')
 const {Sequelize, DataTypes} = require('sequelize')
 
-
+//Indexes exist on trip.id, trip.startTime, trip.endDate
 const app = express()
 
 const db=mysql.createConnection({
@@ -154,28 +154,46 @@ app.post("/api/trips/delete",(req,res)=>{
 app.post("/api/trips/filter", (req, res)=>{
     console.log("recieved form from React for filter trips");
     console.log("body is " + JSON.stringify(req.body));
-    let q = "SELECT trip.*, " + 
-            //"COUNT(t2.id) AS overlapCount, " +
-            "TIMEDIFF(trip.endTime, trip.startTime) as duration, " + 
-            "make, " +
-            "model, " + 
-            "firstName, " + 
-            "lastName, " +
-            "startWarehouse.id as startWarehouseID, " +
-            "endWarehouse.id as endWarehouseID, " + 
-            "endWarehouse.name as destinationName, " + 
-            "endWarehouse.address as destinationAddress, " + 
-            "startWarehouse.name as startName, " + 
-            "startWarehouse.address as startAddress " +
-            "FROM trip " +
-            /*"JOIN trip AS t2 ON trips.id != t2.id AND " +
-            "  ((trips.startTime BETWEEN t2.startTime AND t2.endTime) OR " + 
-            "  (trips.endTime BETWEEN t2.startTime AND t2.endTime)) " + */
-            "JOIN driver ON driver.licenseNumber = trip.driverLicenseNumber " +
-            "JOIN truck ON truck.plateNumber = trip.truckPlateNumber " +
-            "JOIN warehouse startWarehouse ON startWarehouse.id = startWarehouseID " +
-            "JOIN warehouse endWarehouse ON endWarehouse.id = endWarehouseID " + 
-            "WHERE ";
+    let q = `SELECT trip.*, 
+            TIMEDIFF(trip.endTime, trip.startTime) as duration,
+            make,
+            model,
+            firstName,
+            lastName,
+            startWarehouse.id as startWarehouseID,
+            endWarehouse.id as endWarehouseID,
+            endWarehouse.name as destinationName, 
+            endWarehouse.address as destinationAddress,
+            startWarehouse.name as startName, 
+            startWarehouse.address as startAddress,
+            tot1.conflictingTruckTrips,
+            dot1.conflictingDriverTrips
+            FROM trip
+            JOIN driver ON driver.licenseNumber = trip.driverLicenseNumber
+            JOIN truck ON truck.plateNumber = trip.truckPlateNumber
+            JOIN warehouse startWarehouse ON startWarehouse.id = startWarehouseID
+            JOIN warehouse endWarehouse ON endWarehouse.id = endWarehouseID
+            LEFT JOIN (
+                SELECT truckOverlapTrip1.id, count(truckOverlapTrip2.id) as conflictingTruckTrips
+                FROM trip truckOverlapTrip1
+                JOIN trip truckOverlapTrip2
+                    ON truckOverlapTrip1.id != truckOverlapTrip2.id AND truckOverlapTrip1.truckPlateNumber = truckOverlapTrip2.truckPlateNumber AND
+                    ((truckOverlapTrip1.startTime BETWEEN truckOverlapTrip2.startTime AND truckOverlapTrip2.endTime) OR
+                    (truckOverlapTrip1.endTime BETWEEN truckOverlapTrip2.startTime AND truckOverlapTrip2.endTime) OR
+                    (truckOverlapTrip1.startTime <= truckOverlapTrip2.startTime AND truckOverlapTrip1.endTime >= truckOverlapTrip2.endTime))
+                GROUP BY truckOverlapTrip1.id
+            ) AS tot1 ON tot1.id = trip.id
+            LEFT JOIN (
+                SELECT driverOverlapTrip1.id, COUNT (driverOverlapTrip2.id) as conflictingDriverTrips
+                FROM trip driverOverlapTrip1
+                JOIN trip driverOverlapTrip2
+                    ON driverOverlapTrip1.id != driverOverlapTrip2.id AND driverOverlapTrip1.driverLicenseNumber = driverOverlapTrip2.driverLicenseNumber AND
+                    ((driverOverlapTrip1.startTime BETWEEN driverOverlapTrip2.startTime AND driverOverlapTrip2.endTime) OR
+                    (driverOverlapTrip1.endTime BETWEEN driverOverlapTrip2.startTime AND driverOverlapTrip2.endTime) OR
+                    (driverOverlapTrip1.startTime <= driverOverlapTrip2.startTime AND driverOverlapTrip1.endTime >= driverOverlapTrip2.endTime))
+                GROUP BY driverOverlapTrip1.id
+            ) AS dot1 ON dot1.id = trip.id
+            WHERE `;
     if ((req.body.minID != undefined) && (req.body.minID != "")) {
         q = q + "trip.id >= " + req.body.minID + " AND ";
     }
@@ -191,8 +209,20 @@ app.post("/api/trips/filter", (req, res)=>{
     if ((req.body.driverID != undefined) && (req.body.driverID != "")) {
         q = q + "driver.licenseNumber = " + req.body.driverID + " AND "
     }
-    q = q + "1 = 1 ORDER BY trip.id";
-    console.log(q)
+    if ((req.body.startDateMin != undefined) && (req.body.startDateMin != "")) {
+        q = q + "trip.startTime >=\"" + req.body.startDateMin + "\" AND "
+    }
+    if ((req.body.startDateMax != undefined) && (req.body.startDateMax != "")) {
+        q = q + "trip.startTime <=\"" + req.body.startDateMax + "\" AND "
+    }
+    if ((req.body.endDateMin != undefined) && (req.body.endDateMin != "")) {
+        q = q + "trip.endTime >=\"" + req.body.endDateMin + "\" AND "
+    }
+    if ((req.body.endDateMax != undefined) && (req.body.endDateMax != "")) {
+        q = q + "trip.endTime <=\"" + req.body.endDateMax + "\" AND "
+    }
+    q = q + "1 = 1";
+    //console.log(q)
     db.query(q, (err,data) => {
         if (err) {
             console.log(err)
